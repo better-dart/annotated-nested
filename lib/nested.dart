@@ -1,4 +1,41 @@
+import 'dart:collection';
+
 import 'package:flutter/widgets.dart';
+
+class WidgetLocation {
+  WidgetLocation(this.index, this.widget);
+
+  final int index;
+  final Widget widget;
+
+  @override
+  bool operator ==(Object other) =>
+      other is WidgetLocation && other.index == index && other.widget == widget;
+
+  @override
+  int get hashCode => hashValues(index, widget);
+
+  @override
+  String toString() {
+    return 'WidgetLocation($index, $widget)';
+  }
+}
+
+class Details {
+  Details({this.forgotten, this.inserted, this.updated});
+
+  final List<WidgetLocation> forgotten;
+  final List<WidgetLocation> inserted;
+  final List<WidgetLocation> updated;
+}
+
+Details didChangeChildren(List<Widget> previous, List<Widget> current) {
+  return Details(
+    forgotten: [],
+    inserted: [],
+    updated: [],
+  );
+}
 
 class Nested extends SingleChildStatelessWidget {
   const Nested({Key key, this.nested = const [], Widget child})
@@ -6,13 +43,15 @@ class Nested extends SingleChildStatelessWidget {
 
   final List<SingleChildWidget> nested;
 
-  @override
-  Widget build(BuildContext context, {Widget child}) {
+  Widget buildForChild(BuildContext context, Widget child) {
+    final element = context as NestedElement;
     var tree = _NestedHook(
+      owner: element,
       child: child,
     );
     for (final provider in nested.reversed) {
       tree = _NestedHook(
+        owner: element,
         child: provider,
         nextChild: tree,
       );
@@ -21,25 +60,26 @@ class Nested extends SingleChildStatelessWidget {
   }
 
   @override
-  _NestedElement createElement() => _NestedElement(this);
+  NestedElement createElement() => NestedElement(this);
 }
 
 // currently useless
 // but that's where the failing tests should be fixed
-class _NestedElement extends SingleChildStatelessElement {
-  _NestedElement(Nested widget) : super(widget);
+class NestedElement extends SingleChildStatelessElement {
+  NestedElement(Nested widget) : super(widget);
 
   @override
   Nested get widget => super.widget as Nested;
 }
 
 class _NestedHook extends StatelessWidget {
-  const _NestedHook({Key key, this.nextChild, this.child})
+  const _NestedHook({Key key, this.nextChild, this.child, this.owner})
       : assert(child != null),
         super(key: key);
 
   final Widget child;
   final Widget nextChild;
+  final NestedElement owner;
 
   @override
   _NestedHookElement createElement() => _NestedHookElement(this);
@@ -81,7 +121,10 @@ abstract class SingleChildStatelessWidget extends StatelessWidget
   final Widget _child;
 
   @override
-  Widget build(BuildContext context, {Widget child});
+  Widget buildForChild(BuildContext context, Widget child);
+
+  @override
+  Widget build(BuildContext context) => buildForChild(context, _child);
 
   @override
   SingleChildStatelessElement createElement() =>
@@ -95,7 +138,7 @@ class SingleChildStatelessElement extends StatelessElement
 
   @override
   Widget build() {
-    return widget.build(this, child: _widget ?? widget._child);
+    return widget.buildForChild(this, _widget ?? widget._child);
   }
 
   @override
@@ -109,7 +152,7 @@ class Adapter extends SingleChildStatelessWidget {
   final Widget Function(BuildContext context, Widget child) builder;
 
   @override
-  Widget build(BuildContext context, {Widget child}) {
+  Widget buildForChild(BuildContext context, Widget child) {
     return builder(context, child);
   }
 }

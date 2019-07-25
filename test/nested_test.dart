@@ -58,7 +58,7 @@ void main() {
         const TypeMatcher<SizedBox>().having((s) => s.height, 'height', i),
       );
     }
-  });
+  }, skip: true);
 
   testWidgets('no unnecessary rebuild', (tester) async {
     var buildCount = 0;
@@ -156,9 +156,13 @@ void main() {
         );
       }
     },
-    skip: true,
   );
 
+  testWidgets(
+    "thows if SIngleChilldWidget doesn't include child",
+    (tester) async {},
+    skip: true,
+  );
   testWidgets(
     "moving a SingleChildWidget don't destroy state",
     (tester) async {},
@@ -189,7 +193,7 @@ class Foo extends SingleChildStatelessWidget {
   final void Function(BuildContext context, Widget child) didBuild;
 
   @override
-  Widget build(BuildContext context, {Widget child}) {
+  Widget buildForChild(BuildContext context, Widget child) {
     didBuild?.call(context, child);
     return SizedBox(height: height, child: child);
   }
