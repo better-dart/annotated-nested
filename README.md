@@ -1,3 +1,46 @@
+
+# annotated-log.md
+
+- https://github.com/better-dart/annotated-nested
+- nested 源码分析
+- `provider` 的 核心依赖包, 单文件, 源码很精简.
+
+## annotated log:
+
+- please check here: [annotated-log.md](./annotated-log.md)
+- 详细源码分析记录.
+
+## 关于 flutter provider 源码分析: 
+
+- 因为需要分析 `provider` 源码, 才来分析 `nested`.
+- 关于 provider 的源码分析: https://github.com/better-dart/annotated-provider
+
+
+
+
+
+
+🚀
+
+🚀
+
+🚀
+
+🚀
+
+🚀
+
+🚀
+
+🚀
+
+🚀
+
+🚀
+
+🚀
+
+
 [![Build Status](https://travis-ci.org/rrousselGit/nested.svg?branch=master)](https://travis-ci.org/rrousselGit/nested)
 [![pub package](https://img.shields.io/pub/v/nested.svg)](https://pub.dartlang.org/packages/nested) [![codecov](https://codecov.io/gh/rrousselGit/nested/branch/master/graph/badge.svg)](https://codecov.io/gh/rrousselGit/nested)
 

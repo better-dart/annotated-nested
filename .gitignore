@@ -12,3 +12,7 @@ coverage/
 
 # Directory created by dartdoc
 doc/api/
+
+
+# add 2020-10:
+.idea/
